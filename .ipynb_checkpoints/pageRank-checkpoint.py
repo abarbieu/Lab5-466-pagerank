@@ -76,14 +76,13 @@ def mean_sse(a,b):
     return np.sum((a-b)**2) * 1.0/len(a)
 
 
-def iteratePageRank(adj):
+def iteratePageRank(adj, d=0.85, epsilon=0.00001):
     """Runs pagerank until maximal difference between ranks is minimal, returns number of iterations"""
     p = [1/adj.shape[0]] * adj.shape[0] 
-    d = 0.9
     jProb = [(1-d)/len(p)] * len(p)
     maxdiff = 1
     numiters = 0
-    while maxdiff > 0.00001:
+    while maxdiff > epsilon:
         numiters+=1
         prevP = p
         p = adj.T*p*d + jProb
@@ -138,7 +137,7 @@ if __name__ == "__main__":
     adj = createAdjMatrix(edges,names)
     adj = fixSinkNodes(adj)    
     adj = scaleAdjMatrix(adj)
-    p, numiters = iteratePageRank(adj)
+    p, numiters = iteratePageRank(adj. d=d, epsilon=epsilon)
     printResults(p, names)
               
     
