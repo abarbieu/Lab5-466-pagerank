@@ -5,7 +5,7 @@
 
 ## Instructions 
 
-### textVectorizer.py
+### pageRank.ipynb
     usage: textVectorizer.py [-h] [--stem [STEM]] dir sw_file out
 
     positional arguments:
@@ -18,12 +18,12 @@
     --stem [STEM]  stemming, default is False
     --gt [GT]      whether or not to generate groundtruth file  
 
-### knnAuthorship.py
-    usage: knnAuthorship.py [-h] [--output OUTPUT] [--k K] [--m {okapi,cosine}] file
+### pageRank.py
+    Usage1 python3 pageRank.py <datafile.>[csv/txt] <dataformat>[SNAP/SMALL] <d>[0-1] <epsilon>[~0.00001]
 
     positional arguments:
-    file                json file containing vectorized document representation (output of textVectorizer.py)
-
+    datafile                .csv or .txt file with data in SNAP or SMALL format given by lab spec
+    dataformat                
     optional arguments:
     --output OUTPUT     file name for output; default is out.csv
     --k K               k value for KNN; default is 10

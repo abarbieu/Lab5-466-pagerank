@@ -90,10 +90,55 @@ def iteratePageRank(adj):
         maxdiff = max(abs(prevP-p))
     return p, numiters
 
-def printResults(p, names, n=10):
-    """Prints names and rank of dataset for first n points"""
-    n = np.clip(n, 1, len(names))
+def printResults(p, names, n=-1):
+    """Prints names and rank of dataset for first n points, -1 is all"""
+    n = np.clip(n, -1, len(names))
     nn = 0
     ps = np.column_stack((names,p))
     df = pd.DataFrame(ps[ps[:,1].argsort()][::-1][:n], columns = ["actor", "pagerank"])
     print(tabulate(df, headers='keys', tablefmt='psql'))
+
+def parse():
+    parser = argparse.ArgumentParser(description="Page Rank")
+    parser.add_argument(
+        "datafile", 
+        type=str, 
+        help=".csv or .txt file with data in SNAP or SMALL format given by lab spec"
+    )
+    parser.add_argument(
+        "dataformat", 
+        choices=["SMALL", "SNAP"],
+        type=str, 
+        help="SMALL or SNAP to determine in which type the data is given"
+    )
+    parser.add_argument(
+        "--d",
+        type=float,
+        default=0.85,
+        help="probability of staying on the same page, usually between 0.7 and 0.95",
+    )
+    parser.add_argument(
+        "--epsilon",
+        type=float,
+        default=0.00001,
+        help="maximal difference between pagerank iterations at which to finish"
+    )
+
+    args = vars(parser.parse_args())
+    return args
+
+if __name__ == "__main__":
+    args = parse()
+    datafile = args["datafile"]
+    dataformat = args["dataformat"]
+    d = args["d"]
+    epsilon = args["epsilon"]
+              
+    edges, names = readData(datafile, dataformat)
+    adj = createAdjMatrix(edges,names)
+    adj = fixSinkNodes(adj)    
+    adj = scaleAdjMatrix(adj)
+    p, numiters = iteratePageRank(adj)
+    printResults(p, names)
+              
+    
