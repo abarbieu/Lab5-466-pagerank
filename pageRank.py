@@ -107,8 +107,8 @@ def parse():
     )
     parser.add_argument(
         "dataformat", 
-        choices=["SMALL", "SNAP"],
         type=str, 
+        choices=["SMALL", "SNAP"],
         help="SMALL or SNAP to determine in which type the data is given"
     )
     parser.add_argument(
