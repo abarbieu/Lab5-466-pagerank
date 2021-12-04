@@ -29,7 +29,11 @@ def readData(datafile, dataformat):
         with open(datafile, 'r') as f:
             lines = [[int(node) for node in re.split('\t',edge.strip('\n'))[:2]] for edge in f.readlines() if edge[0][0] != '#']
         edges = np.array(lines)
-        return edges, sorted(np.unique(np.array(lines)))
+        names = np.array(sorted(np.unique(np.array(lines))))
+        fromN = np.searchsorted(names,edges.T[0])
+        toN = np.searchsorted(names,edges.T[1])
+        edges = np.array([fromN,toN]).T
+        return edges, names
     elif dataformat == "SMALL":
         df = pd.read_csv(datafile, header=None, usecols=[i for i in range(4)])
         if type(df[2][0]) == str:
@@ -48,6 +52,8 @@ def readData(datafile, dataformat):
 def createAdjMatrix(edges, names):
     """Creates a scipy lil adjacency matrix from edge list"""
     adj = sparse.lil_matrix((np.max(edges)+1, np.max(edges)+1))
+#     adj = sparse.lil_matrix((len(names), len(names)))
+
     adj[edges[:,0], edges[:,1]] = 1   
     return adj
 
@@ -95,7 +101,7 @@ def printResults(p, names, n=-1):
     nn = 0
     ps = np.column_stack((names,p))
     df = pd.DataFrame(ps[ps[:,1].argsort()][::-1][:n], columns = ["actor", "pagerank"])
-    print(tabulate(df, headers='keys', tablefmt='psql'))
+    print(tabulate(df, headers='keys'))
 
 def parse():
     parser = argparse.ArgumentParser(description="Page Rank")
@@ -137,7 +143,7 @@ if __name__ == "__main__":
     adj = createAdjMatrix(edges,names)
     adj = fixSinkNodes(adj)    
     adj = scaleAdjMatrix(adj)
-    p, numiters = iteratePageRank(adj. d=d, epsilon=epsilon)
+    p, numiters = iteratePageRank(adj, d=d, epsilon=epsilon)
     printResults(p, names)
               
     
